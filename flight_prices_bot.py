@@ -9,22 +9,22 @@ token = os.getenv('RAPIDAPI_FLIGHTS_TOKEN')
 host = os.getenv('RAPIDAPI_FLIGHTS_HOST')
 
 # Number of passengers
-adults=3
-#children=0
-#infants=0
+adults=1 # Bug in API - __typename:"AppError" error:"'adultsHoldBags' not properly defined." - Always use 1 for now
+children=0
+infants=0
 
 # Source/Destination
 # For cities, use format 'City:city-name_statecode_countrycode' (e.g., 'City:buenos-aires_ba_ar')
 # For countries, use format 'Country:countrycode' (e.g., 'Country:AR')
 # Source and destination can be combined for displaying multiple options, by separating with commas. (e.g., 'City:miami_fl_us,Country:US')
 source="City:buenos-aires_ba_ar"
-destination="miami_fl_us"
+destination="City:miami_fl_us"
 
 # Dates - use format 'YYYY-MM-DDTHH:MM:SS'
-outbound_start_date="2026-07-20T00:00:00"
-outbound_end_date="2026-07-31T00:00:00"
-#inbound_start_date="2026-08-10T00:00:00"
-#inbound_end_date="2026-08-20T00:00:00"
+outbound_start_date=""#"2026-07-20T00:00:00"
+outbound_end_date=""#2026-07-31T00:00:00"
+inbound_start_date=""
+inbound_end_date=""
 
 # Bags
 handbags=1
@@ -78,13 +78,14 @@ enableThrowAwayTicketing="false"
 
 
 # Construct querystring
+
 querystring = {"source":source,
                "destination":destination,
                "currency":"usd",
                "locale":"en_US",
                "adults":str(adults),
-               #"children":str(children),
-               #"infants":str(infants),
+               "children":str(children),
+               "infants":str(infants),
                "handbags":str(handbags),
                "holdbags":str(holdbags),
                "cabinClass":cabinClass,
@@ -101,15 +102,15 @@ querystring = {"source":source,
                "enableThrowAwayTicketing":enableThrowAwayTicketing,
                "priceStart":str(minPrice),
                "priceEnd":str(maxPrice),
-               "maxStopsCount":str(maxStopsCount),
+               #"maxStopsCount":str(maxStopsCount), # Filter is having issues, commented out for now
                "outbound":outboundDaysOfWeek,
                "transportTypes":"FLIGHT",
                "contentProviders":"FLIXBUS_DIRECTS,FRESH,KAYAK,KIWI",
                "limit":str(limit),
                "outboundDepartmentDateStart":outbound_start_date,
-               "outboundDepartmentDateEnd":outbound_end_date
-               #"inboundDepartureDateStart":inbound_start_date,
-               #"inboundDepartureDateEnd":inbound_end_date
+               "outboundDepartmentDateEnd":outbound_end_date,
+               "inboundDepartureDateStart":inbound_start_date,
+               "inboundDepartureDateEnd":inbound_end_date
 }
 
 # Sample querystring with all options included
@@ -136,13 +137,13 @@ querystring = {"source":"City:buenos-aires_ba_ar",
                "enableTrueHiddenCity":"false",
                "enableThrowAwayTicketing":"false",
                "priceStart":"100",
-               "priceEnd":"1000",
-               "maxStopsCount":"0",
+               "priceEnd":"800",
+#               "maxStopsCount":"1", # Filter is having issues, commented out for now
                "outbound":"SUNDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,MONDAY,TUESDAY",
                "transportTypes":"FLIGHT",
                "contentProviders":"FLIXBUS_DIRECTS,FRESH,KAYAK,KIWI",
                "limit":"20",
-               "inboundDepartureDateStart":"2026-07-22T00:00:00",
+               "inboundDepartureDateStart":"2026-01-22T00:00:00",
                "inboundDepartureDateEnd":"2026-07-30T00:00:00",
                "outboundDepartmentDateStart":"2026-08-05T00:00:00",
                "outboundDepartmentDateEnd":"2026-08-15T00:00:00"
@@ -157,3 +158,5 @@ headers = {
 response = requests.get(url, headers=headers, params=querystring)
 
 print(response.json())
+print(response.status_code)
+print(response)
